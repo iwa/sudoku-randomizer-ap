@@ -36,18 +36,24 @@ export default function App() {
   };
 
   return (
-    <main className="container">
-      <h1>Sudoku Rando AP</h1>
+    <main>
+      <h1 className="text-2xl text-center font-bold italic mt-2 mb-4">
+        Sudoku Rando AP
+      </h1>
 
-      <APConnect />
+      <div className="flex flex-row mt-4 gap-2 px-2">
+        <div className="flex-1 bg-zinc-800 flex items-center justify-center rounded p-4">
+          <SudokuGrid
+            grid={grid}
+            onCellChange={handleCellChange}
+            selected={selected}
+            onCellSelect={handleCellSelect}
+          />
+        </div>
 
-      <div className="mt-4">
-        <SudokuGrid
-          grid={grid}
-          onCellChange={handleCellChange}
-          selected={selected}
-          onCellSelect={handleCellSelect}
-        />
+        <div className="flex-1 bg-zinc-800 flex items-baseline justify-center rounded p-4">
+          <APConnect />
+        </div>
       </div>
     </main>
   );
