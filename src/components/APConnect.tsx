@@ -5,9 +5,15 @@ export default function APConnect() {
   const [server, setServer] = useState("localhost:38281");
   const [slot, setSlot] = useState("Player");
   const [password, setPassword] = useState("");
+  const [status, setStatus] = useState("");
 
   const handleConnect = async () => {
-    await connectToAP(server, slot, password);
+    try {
+      await connectToAP(server, slot, password);
+      setStatus("Connected to Archipelago server!");
+    } catch (err) {
+      setStatus(`Failed to connect to Archipelago server. ${err}`);
+    }
   };
 
   return (
@@ -36,10 +42,11 @@ export default function APConnect() {
       <button
         type="button"
         onClick={handleConnect}
-        className="bg-blue-500 text-white px-4 py-2 rounded"
+        className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-600"
       >
         Connect to AP
       </button>
+      <div>{status}</div>
     </div>
   );
 }
