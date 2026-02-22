@@ -7,7 +7,7 @@ export async function connectToAP(
   slot: string,
   password?: string,
 ) {
-  await apClient.login(server, slot, "SudokuRandoAP", {
+  await apClient.login(server, slot, "SudokuRando", {
     password: password,
   });
 }

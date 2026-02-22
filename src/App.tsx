@@ -4,6 +4,7 @@ import "./App.css";
 import APStatus from "./components/APStatus";
 import APConnect from "./components/APConnect";
 import SudokuGrid from "./components/SudokuGrid";
+import MessageLog from "./components/MessageLog";
 import { disconnectFromAP } from "./archipelago/client";
 
 function createEmptyGrid(): Grid {
@@ -75,6 +76,8 @@ export default function App() {
           <APConnect isConnected={isConnected} onConnected={handleConnected} />
         </div>
       </div>
+
+      <MessageLog />
     </main>
   );
 }
