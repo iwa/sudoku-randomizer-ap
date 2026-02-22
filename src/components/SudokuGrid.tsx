@@ -1,9 +1,9 @@
-import type { Grid } from "../sudoku/types";
+import type { CellValue, Grid } from "../sudoku/types";
 import Cell from "./Cell";
 
 interface Props {
   grid: Grid;
-  onCellChange: (row: number, col: number, value: number | null) => void;
+  onCellChange: (row: number, col: number, value: CellValue) => void;
   selected: [number, number] | null;
   onCellSelect: (row: number, col: number) => void;
 }
@@ -25,7 +25,7 @@ export default function SudokuGrid({
               selected ? selected[0] === r && selected[1] === c : false
             }
             onClick={() => onCellSelect(r, c)}
-            onChange={(value) => onCellChange(r, c, value)}
+            onChange={(value) => onCellChange(r, c, value as CellValue)}
           />
         )),
       )}
