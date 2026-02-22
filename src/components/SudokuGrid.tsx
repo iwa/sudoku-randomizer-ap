@@ -1,0 +1,36 @@
+import type { CellValue, Grid } from "../sudoku/types";
+import Cell from "./Cell";
+
+interface Props {
+  grid: Grid;
+  onCellChange: (row: number, col: number, value: CellValue) => void;
+  selected: [number, number] | null;
+  onCellSelect: (row: number, col: number) => void;
+}
+
+export default function SudokuGrid({
+  grid,
+  onCellChange,
+  selected,
+  onCellSelect,
+}: Props) {
+  return (
+    <div className="grid grid-cols-9 w-fit rounded overflow-hidden">
+      {grid.map((row, r) =>
+        row.map((cell, c) => (
+          <Cell
+            key={`${r}-${c}`}
+            cell={cell}
+            row={r}
+            col={c}
+            isSelected={
+              selected ? selected[0] === r && selected[1] === c : false
+            }
+            onClick={() => onCellSelect(r, c)}
+            onChange={(value) => onCellChange(r, c, value as CellValue)}
+          />
+        )),
+      )}
+    </div>
+  );
+}
