@@ -5,6 +5,7 @@ import APConnect from "./APConnect";
 import APLocationProgress from "./APLocationProgress";
 import DifficultySelector from "./DifficultySelector";
 import SudokuGrid from "./SudokuGrid";
+import Numpad from "./Numpad";
 import MessageLog from "./MessageLog";
 import {
   disconnectFromAP,
@@ -54,6 +55,11 @@ export default function App() {
     setSelected([row, col]);
   };
 
+  const handleNumpadInput = (value: CellValue) => {
+    if (selected === null) return;
+    handleCellChange(selected[0], selected[1], value);
+  };
+
   const handleGenerate = (difficulty: Difficulty) => {
     const result = generateGrid(difficulty);
     setGrid(result.grid);
@@ -96,12 +102,18 @@ export default function App() {
       </h1>
 
       <div className="flex flex-row gap-2 px-2">
-        <div className="flex-1 bg-zinc-800 flex items-center justify-center rounded p-4">
+        <div className="flex-1 bg-zinc-800 flex flex-col items-center justify-center rounded p-4">
           <SudokuGrid
             grid={grid}
             onCellChange={handleCellChange}
             selected={selected}
             onCellSelect={handleCellSelect}
+          />
+          <Numpad
+            onInput={handleNumpadInput}
+            disabled={
+              selected === null || grid[selected[0]][selected[1]].isGiven
+            }
           />
         </div>
 
