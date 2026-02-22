@@ -1,8 +1,8 @@
-import type { CellValue, Grid, Difficulty, Solution } from "./types";
+import type { CellValue, Grid, Difficulty, Solution, Cell } from "./types";
 import { DIFFICULTY_GIVENS } from "./types";
 
 /**
- * Shuffles an array in place using Fisher-Yates.
+ * Shuffles an array using Fisher-Yates.
  */
 function shuffle<T>(arr: T[]): T[] {
   for (let i = arr.length - 1; i > 0; i--) {
@@ -15,28 +15,28 @@ function shuffle<T>(arr: T[]): T[] {
 /**
  * Checks whether placing `value` at (row, col) is valid in the raw number grid.
  */
-function isValid(
-  board: (number | null)[][],
+function isValidPlacement(
+  grid: CellValue[][],
   row: number,
   col: number,
   value: number,
 ): boolean {
-  // Check row
-  for (let c = 0; c < 9; c++) {
-    if (board[row][c] === value) return false;
+  // row & col check
+  for (let i = 0; i < 9; i++) {
+    if (grid[row][i] === value || grid[i][col] === value) {
+      return false;
+    }
   }
 
-  // Check column
-  for (let r = 0; r < 9; r++) {
-    if (board[r][col] === value) return false;
-  }
+  // box check
+  const boxStartRow = Math.floor(row / 3) * 3;
+  const boxStartCol = Math.floor(col / 3) * 3;
 
-  // Check 3x3 box
-  const boxRow = Math.floor(row / 3) * 3;
-  const boxCol = Math.floor(col / 3) * 3;
-  for (let r = boxRow; r < boxRow + 3; r++) {
-    for (let c = boxCol; c < boxCol + 3; c++) {
-      if (board[r][c] === value) return false;
+  for (let r = boxStartRow; r < boxStartRow + 3; r++) {
+    for (let c = boxStartCol; c < boxStartCol + 3; c++) {
+      if (grid[r][c] === value) {
+        return false;
+      }
     }
   }
 
@@ -44,21 +44,21 @@ function isValid(
 }
 
 /**
- * Fills the board completely using randomized backtracking.
- * Returns true if a valid complete board was produced.
+ * Fills the grid completely using randomized backtracking.
+ * Returns true if a valid complete grid was produced.
  */
-function fillBoard(board: (number | null)[][]): boolean {
-  for (let r = 0; r < 9; r++) {
-    for (let c = 0; c < 9; c++) {
-      if (board[r][c] !== null) continue;
+function fillGrid(grid: CellValue[][]): boolean {
+  for (let row = 0; row < 9; row++) {
+    for (let col = 0; col < 9; col++) {
+      if (grid[row][col] !== null) continue;
 
       const candidates = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
       for (const num of candidates) {
-        if (isValid(board, r, c, num)) {
-          board[r][c] = num;
-          if (fillBoard(board)) return true;
-          board[r][c] = null;
+        if (isValidPlacement(grid, row, col, num)) {
+          grid[row][col] = num as CellValue;
+          if (fillGrid(grid)) return true;
+          grid[row][col] = null;
         }
       }
 
@@ -66,25 +66,25 @@ function fillBoard(board: (number | null)[][]): boolean {
     }
   }
 
-  return true; // board is fully filled
+  return true; // grid is fully filled
 }
 
 /**
- * Counts the number of solutions for a board (stops at 2 to save time).
+ * Counts the number of solutions for a grid (stops at 2 to save time).
  */
-function countSolutions(board: (number | null)[][], limit: number = 2): number {
+function countSolutions(grid: CellValue[][], limit: number = 2): number {
   let count = 0;
 
   function solve(): boolean {
-    for (let r = 0; r < 9; r++) {
-      for (let c = 0; c < 9; c++) {
-        if (board[r][c] !== null) continue;
+    for (let row = 0; row < 9; row++) {
+      for (let col = 0; col < 9; col++) {
+        if (grid[row][col] !== null) continue;
 
         for (let num = 1; num <= 9; num++) {
-          if (isValid(board, r, c, num)) {
-            board[r][c] = num;
+          if (isValidPlacement(grid, row, col, num)) {
+            grid[row][col] = num as CellValue;
             if (solve()) return true;
-            board[r][c] = null;
+            grid[row][col] = null;
           }
         }
 
@@ -102,10 +102,10 @@ function countSolutions(board: (number | null)[][], limit: number = 2): number {
 }
 
 /**
- * Removes cells from a completed board to reach the target number of givens,
+ * Removes cells from a completed grid to reach the target number of givens,
  * ensuring the puzzle still has a unique solution.
  */
-function removeCells(board: (number | null)[][], givens: number): void {
+function removeCells(grid: CellValue[][], givens: number): void {
   const totalCells = 81;
   let toRemove = totalCells - givens;
 
@@ -118,19 +118,19 @@ function removeCells(board: (number | null)[][], givens: number): void {
   }
   shuffle(positions);
 
-  for (const [r, c] of positions) {
+  for (const [row, col] of positions) {
     if (toRemove <= 0) break;
-    if (board[r][c] === null) continue;
+    if (grid[row][col] === null) continue;
 
-    const backup = board[r][c];
-    board[r][c] = null;
+    const backup = grid[row][col];
+    grid[row][col] = null;
 
-    // Deep copy for solution counting so we don't mutate the working board
-    const copy = board.map((row) => [...row]);
+    // Deep copy for solution counting so we don't mutate the working grid
+    const copy = grid.map((row) => [...row]);
 
     if (countSolutions(copy) !== 1) {
       // Removing this cell would create multiple solutions — put it back
-      board[r][c] = backup;
+      grid[row][col] = backup;
     } else {
       toRemove--;
     }
@@ -148,16 +148,14 @@ export function generateGrid(difficulty: Difficulty): {
 } {
   const givens = DIFFICULTY_GIVENS[difficulty];
 
-  // Create and fill a complete valid board
-  const board: (number | null)[][] = Array.from({ length: 9 }, () =>
+  // Create and fill a complete valid grid
+  const board: CellValue[][] = Array.from({ length: 9 }, () =>
     Array.from({ length: 9 }, () => null),
   );
-  fillBoard(board);
+  fillGrid(board);
 
   // Save the full solution before removing cells
-  const solution: Solution = board.map((row) =>
-    row.map((value) => value as CellValue),
-  );
+  const solution: Solution = board.map((row) => row.map((value) => value));
 
   // Remove cells to match difficulty
   removeCells(board, givens);
@@ -165,7 +163,7 @@ export function generateGrid(difficulty: Difficulty): {
   // Convert to Grid type
   const grid: Grid = board.map((row) =>
     row.map((value) => ({
-      value: value as CellValue,
+      value: value,
       isGiven: value !== null,
       isError: false,
     })),
