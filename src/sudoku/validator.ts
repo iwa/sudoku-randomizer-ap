@@ -81,6 +81,18 @@ export function isGridValid(grid: Grid, solution: Solution): boolean {
   return true;
 }
 
+export function doesGridContainsUserInput(grid: Grid): boolean {
+  for (let row = 0; row < 9; row++) {
+    for (let col = 0; col < 9; col++) {
+      if (!grid[row][col].isGiven && grid[row][col].value !== null) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 /**
  * Marks cells as errors if their value doesn't match the solution,
  * even when there are no visible row/column/box conflicts.
