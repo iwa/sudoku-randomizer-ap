@@ -91,11 +91,11 @@ export default function App() {
 
   return (
     <main>
-      <h1 className="text-2xl text-center font-bold italic text-white mt-2 mb-4">
+      <h1 className="text-2xl text-center font-bold italic text-white pt-4 pb-5">
         Sudoku Rando AP
       </h1>
 
-      <div className="flex flex-row mt-4 gap-2 px-2">
+      <div className="flex flex-row gap-2 px-2">
         <div className="flex-1 bg-zinc-800 flex items-center justify-center rounded p-4">
           <SudokuGrid
             grid={grid}
