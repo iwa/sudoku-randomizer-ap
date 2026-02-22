@@ -30,14 +30,14 @@ export default function Cell({
   // Background color
   let bg = "bg-white";
   if (isSelected) bg = "bg-blue-100";
-  else if (cell.isError) bg = "bg-red-100";
+  else if (cell.isError && cell.isGiven) bg = "bg-red-100"; // only apply red bg on given conflict
 
   // Text color
   let textColor = "text-black font-bold";
-  if (cell.isError) {
+  if (cell.isError && !cell.isGiven) {
     textColor = "text-red-600 font-bold";
   } else if (!cell.isGiven) {
-    textColor = "text-blue-700";
+    textColor = "text-blue-700 font-bold";
   }
 
   // Subgrid borders: thicker on every 3rd boundary
