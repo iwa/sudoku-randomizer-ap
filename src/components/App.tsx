@@ -20,6 +20,7 @@ import {
   validateGrid,
 } from "../sudoku/validator";
 import { useLocationProgress } from "../hooks/useLocationProgress";
+import Lives from "./Lives";
 
 function createEmptyGrid(): Grid {
   return Array.from({ length: 9 }, () =>
@@ -34,26 +35,32 @@ function createEmptyGrid(): Grid {
 export default function App() {
   const [grid, setGrid] = useState(createEmptyGrid());
   const [solution, setSolution] = useState<Solution | null>(null);
+  const [lives, setLives] = useState<number | null>(null);
   const [selected, setSelected] = useState<[number, number] | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [slotName, setSlotName] = useState("");
   const { checked, total } = useLocationProgress(isConnected);
   const hasLocationsRemaining = isConnected && checked < total;
 
+  const gridLocked = lives === 0;
+
   const handleCellChange = (row: number, col: number, value: CellValue) => {
-    setGrid((prevGrid) => {
-      const newGrid = prevGrid.map((r) => r.map((c) => ({ ...c })));
-      const cell = newGrid[row][col];
+    if (gridLocked) return;
 
-      if (cell.isGiven) return prevGrid;
+    const cell = grid[row][col];
+    if (cell.isGiven) return;
 
-      cell.value = value;
+    const newGrid = grid.map((r) => r.map((c) => ({ ...c })));
+    newGrid[row][col] = { ...newGrid[row][col], value };
 
-      if (solution) {
-        return validateGrid(newGrid, solution);
-      }
-      return newGrid;
-    });
+    const validated = solution ? validateGrid(newGrid, solution) : newGrid;
+
+    // Deduct a life when placing a wrong number (not on deletion)
+    if (value !== null && validated[row][col].isError) {
+      setLives((prev) => (prev !== null ? Math.max(0, prev - 1) : null));
+    }
+
+    setGrid(validated);
   };
 
   const handleCellSelect = (row: number, col: number) => {
@@ -61,18 +68,19 @@ export default function App() {
   };
 
   const handleNumpadInput = (value: CellValue) => {
-    if (selected === null) return;
+    if (selected === null || gridLocked) return;
     handleCellChange(selected[0], selected[1], value);
   };
 
   const handleGenerate = (difficulty: Difficulty) => {
-    if (doesGridContainsUserInput(grid)) {
+    if (doesGridContainsUserInput(grid) && !gridLocked) {
       if (!confirm("Are you sure you want to generate a new grid?")) return;
     }
 
     const result = generateGrid(difficulty);
     setGrid(result.grid);
     setSolution(result.solution);
+    setLives(3);
     setSelected(null);
   };
 
@@ -90,6 +98,7 @@ export default function App() {
 
     setGrid(createEmptyGrid());
     setSolution(null);
+    setLives(null);
     setSelected(null);
   };
 
@@ -111,17 +120,20 @@ export default function App() {
       </h1>
 
       <div className="flex flex-row gap-2 px-2">
-        <div className="flex-1 bg-zinc-800 flex flex-col items-center justify-center rounded p-4">
+        <div className="flex-1 bg-zinc-800 flex flex-col items-center justify-center rounded gap-2 p-4">
+          <Lives lives={lives} gridLocked={gridLocked} />
           <SudokuGrid
             grid={grid}
-            onCellChange={handleCellChange}
+            onCellChange={gridLocked ? () => {} : handleCellChange}
             selected={selected}
             onCellSelect={handleCellSelect}
           />
           <Numpad
             onInput={handleNumpadInput}
             disabled={
-              selected === null || grid[selected[0]][selected[1]].isGiven
+              gridLocked ||
+              selected === null ||
+              grid[selected[0]][selected[1]].isGiven
             }
           />
         </div>
