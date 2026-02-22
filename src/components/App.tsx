@@ -13,7 +13,12 @@ import {
   apClient,
 } from "../archipelago/client";
 import { generateGrid } from "../sudoku/generator";
-import { isGridComplete, isGridValid, validateGrid } from "../sudoku/validator";
+import {
+  doesGridContainsUserInput,
+  isGridComplete,
+  isGridValid,
+  validateGrid,
+} from "../sudoku/validator";
 import { useLocationProgress } from "../hooks/useLocationProgress";
 
 function createEmptyGrid(): Grid {
@@ -61,6 +66,10 @@ export default function App() {
   };
 
   const handleGenerate = (difficulty: Difficulty) => {
+    if (doesGridContainsUserInput(grid)) {
+      if (!confirm("Are you sure you want to generate a new grid?")) return;
+    }
+
     const result = generateGrid(difficulty);
     setGrid(result.grid);
     setSolution(result.solution);
