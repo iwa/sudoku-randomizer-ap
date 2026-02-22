@@ -1,46 +1,13 @@
-# Astro Starter Kit: Basics
+# SudokuRando AP
 
-```sh
-bun create astro@latest -- --template basics
-```
+- Use APWorld from https://github.com/iwa/ArchipelagoSudoku
+- If self-host the server and you have security errors like "the operation is insecure", you need to:
+  - Firefox, in `about:config`, `network.websocket.allowInsecureFromHTTPS` to true
+  - Chrome, Site settings, "Insecure content" to Allow
+  - Edge, Permissions for this site, "Insecure content" to Allow
+  - :warning: Beware of what you're doing when self-hosting and opening your server to the public
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## todo list
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
-```
-
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `bun install`             | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun build`           | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- corner entry
+- center entry
