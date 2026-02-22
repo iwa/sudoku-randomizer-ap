@@ -13,6 +13,7 @@
     "@tailwindcss/vite": "^4.2.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "archipelago.js": "^2.0.4",
     "astro": "^5.17.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
