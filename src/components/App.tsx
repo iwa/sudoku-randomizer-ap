@@ -116,7 +116,7 @@ export default function App() {
   return (
     <main>
       <h1 className="text-2xl text-center font-bold italic text-white pt-4 pb-5">
-        Sudoku Rando AP
+        SudokuRando - AP
       </h1>
 
       <div className="flex flex-row gap-2 px-2">
