@@ -15,7 +15,7 @@ export default function SudokuGrid({
   onCellSelect,
 }: Props) {
   return (
-    <div className="grid grid-cols-9 w-fit rounded overflow-hidden">
+    <div className="grid grid-cols-9 w-fit overflow-hidden">
       {grid.map((row, r) =>
         row.map((cell, c) => (
           <Cell

@@ -42,20 +42,24 @@ export default function Cell({
 
   // Subgrid borders: thicker on every 3rd boundary
   const borderT =
-    row % 3 === 0 ? "border-t-2 border-t-black" : "border-t border-t-gray-300";
+    row % 3 === 0
+      ? "border-t-2 border-t-zinc-800"
+      : "border-t border-t-gray-300";
   const borderL =
-    col % 3 === 0 ? "border-l-2 border-l-black" : "border-l border-l-gray-300";
+    col % 3 === 0
+      ? "border-l-2 border-l-zinc-800"
+      : "border-l border-l-gray-300";
   const borderB =
     row === 8
-      ? "border-b-2 border-b-black"
+      ? "border-b-2 border-b-zinc-800"
       : row % 3 === 2
-        ? "border-b-2 border-b-black"
+        ? "border-b-2 border-b-zinc-800"
         : "";
   const borderR =
     col === 8
-      ? "border-r-2 border-r-black"
+      ? "border-r-2 border-r-zinc-800"
       : col % 3 === 2
-        ? "border-r-2 border-r-black"
+        ? "border-r-2 border-r-zinc-800"
         : "";
 
   return (
