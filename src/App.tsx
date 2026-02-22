@@ -1,8 +1,10 @@
 import { useState } from "react";
 import type { CellValue, Grid } from "./sudoku/types";
 import "./App.css";
+import APStatus from "./components/APStatus";
 import APConnect from "./components/APConnect";
 import SudokuGrid from "./components/SudokuGrid";
+import { disconnectFromAP } from "./archipelago/client";
 
 function createEmptyGrid(): Grid {
   return Array.from({ length: 9 }, () =>
@@ -17,6 +19,8 @@ function createEmptyGrid(): Grid {
 export default function App() {
   const [grid, setGrid] = useState(createEmptyGrid());
   const [selected, setSelected] = useState<[number, number] | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const [slotName, setSlotName] = useState("");
 
   const handleCellChange = (row: number, col: number, value: CellValue) => {
     setGrid((prevGrid) => {
@@ -35,6 +39,17 @@ export default function App() {
     setSelected([row, col]);
   };
 
+  const handleConnected = (slot: string) => {
+    setIsConnected(true);
+    setSlotName(slot);
+  };
+
+  const handleDisconnect = () => {
+    disconnectFromAP();
+    setIsConnected(false);
+    setSlotName("");
+  };
+
   return (
     <main>
       <h1 className="text-2xl text-center font-bold italic mt-2 mb-4">
@@ -51,8 +66,13 @@ export default function App() {
           />
         </div>
 
-        <div className="flex-1 bg-zinc-800 flex items-baseline justify-center rounded p-4">
-          <APConnect />
+        <div className="flex-1 bg-zinc-800 flex flex-col rounded p-4">
+          <APStatus
+            isConnected={isConnected}
+            slotName={slotName}
+            onDisconnect={handleDisconnect}
+          />
+          <APConnect isConnected={isConnected} onConnected={handleConnected} />
         </div>
       </div>
     </main>
