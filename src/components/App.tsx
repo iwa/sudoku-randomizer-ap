@@ -12,11 +12,7 @@ import {
   apClient,
 } from "../archipelago/client";
 import { generateGrid } from "../sudoku/generator";
-import {
-  validateAgainstSolution,
-  isGridComplete,
-  isGridValid,
-} from "../sudoku/validator";
+import { isGridComplete, isGridValid, validateGrid } from "../sudoku/validator";
 import { useLocationProgress } from "../hooks/useLocationProgress";
 
 function createEmptyGrid(): Grid {
@@ -48,7 +44,7 @@ export default function App() {
       cell.value = value;
 
       if (solution) {
-        return validateAgainstSolution(newGrid, solution);
+        return validateGrid(newGrid, solution);
       }
       return newGrid;
     });
@@ -66,7 +62,8 @@ export default function App() {
   };
 
   const gridComplete = isGridComplete(grid);
-  const gridValid = gridComplete && solution !== null && isGridValid(grid);
+  const gridValid =
+    gridComplete && solution !== null && isGridValid(grid, solution);
 
   const handleCheck = () => {
     if (!gridValid) return;
