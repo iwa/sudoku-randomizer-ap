@@ -15,12 +15,14 @@ export default function SudokuGrid({
   onCellSelect,
 }: Props) {
   return (
-    <div className="grid grid-cols-9 border-2 border-black w-fit">
+    <div className="grid grid-cols-9 w-fit rounded overflow-hidden">
       {grid.map((row, r) =>
         row.map((cell, c) => (
           <Cell
             key={`${r}-${c}`}
             cell={cell}
+            row={r}
+            col={c}
             isSelected={
               selected ? selected[0] === r && selected[1] === c : false
             }

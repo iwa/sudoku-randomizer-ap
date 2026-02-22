@@ -1,11 +1,24 @@
 import { useState } from "react";
-import type { CellValue, Grid } from "./sudoku/types";
+import type { CellValue, Difficulty, Grid, Solution } from "./sudoku/types";
 import "./App.css";
 import APStatus from "./components/APStatus";
 import APConnect from "./components/APConnect";
+import APLocationProgress from "./components/APLocationProgress";
+import DifficultySelector from "./components/DifficultySelector";
 import SudokuGrid from "./components/SudokuGrid";
 import MessageLog from "./components/MessageLog";
-import { disconnectFromAP } from "./archipelago/client";
+import {
+  disconnectFromAP,
+  sendLocationCheck,
+  apClient,
+} from "./archipelago/client";
+import { generateGrid } from "./sudoku/generator";
+import {
+  validateAgainstSolution,
+  isGridComplete,
+  isGridValid,
+} from "./sudoku/validator";
+import { useLocationProgress } from "./hooks/useLocationProgress";
 
 function createEmptyGrid(): Grid {
   return Array.from({ length: 9 }, () =>
@@ -19,25 +32,54 @@ function createEmptyGrid(): Grid {
 
 export default function App() {
   const [grid, setGrid] = useState(createEmptyGrid());
+  const [solution, setSolution] = useState<Solution | null>(null);
   const [selected, setSelected] = useState<[number, number] | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [slotName, setSlotName] = useState("");
+  const { checked, total } = useLocationProgress(isConnected);
+  const hasLocationsRemaining = isConnected && checked < total;
 
   const handleCellChange = (row: number, col: number, value: CellValue) => {
     setGrid((prevGrid) => {
       const newGrid = prevGrid.map((r) => r.map((c) => ({ ...c })));
       const cell = newGrid[row][col];
 
-      if (cell.isGiven) return prevGrid; // Don't allow changes to given cells
+      if (cell.isGiven) return prevGrid;
 
       cell.value = value;
-      cell.isError = false; // Reset error state on change
+
+      if (solution) {
+        return validateAgainstSolution(newGrid, solution);
+      }
       return newGrid;
     });
   };
 
   const handleCellSelect = (row: number, col: number) => {
     setSelected([row, col]);
+  };
+
+  const handleGenerate = (difficulty: Difficulty) => {
+    const result = generateGrid(difficulty);
+    setGrid(result.grid);
+    setSolution(result.solution);
+    setSelected(null);
+  };
+
+  const gridComplete = isGridComplete(grid);
+  const gridValid = gridComplete && solution !== null && isGridValid(grid);
+
+  const handleCheck = () => {
+    if (!gridValid) return;
+
+    const nextLocation = apClient.room.missingLocations[0];
+    if (nextLocation !== undefined) {
+      sendLocationCheck(nextLocation);
+    }
+
+    setGrid(createEmptyGrid());
+    setSolution(null);
+    setSelected(null);
   };
 
   const handleConnected = (slot: string) => {
@@ -74,6 +116,24 @@ export default function App() {
             onDisconnect={handleDisconnect}
           />
           <APConnect isConnected={isConnected} onConnected={handleConnected} />
+          <APLocationProgress checked={checked} total={total} />
+          {hasLocationsRemaining && (
+            <DifficultySelector onGenerate={handleGenerate} />
+          )}
+          {hasLocationsRemaining && gridComplete && (
+            <button
+              type="button"
+              onClick={handleCheck}
+              disabled={!gridValid}
+              className={`mt-3 w-full rounded px-4 py-2 text-sm font-medium transition-colors ${
+                gridValid
+                  ? "bg-green-600 text-white cursor-pointer hover:bg-green-700"
+                  : "bg-zinc-600 text-zinc-400 cursor-not-allowed"
+              }`}
+            >
+              {gridValid ? "✓ Submit Solution" : "✗ Grid has errors"}
+            </button>
+          )}
         </div>
       </div>
 
