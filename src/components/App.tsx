@@ -91,7 +91,7 @@ export default function App() {
   const handleCheck = () => {
     if (!gridValid) return;
 
-    const nextLocation = apClient.room.missingLocations[0];
+    const nextLocation = getMissingLocationsSorted()[0];
     if (nextLocation !== undefined) {
       sendLocationCheck(nextLocation);
     }
@@ -111,6 +111,10 @@ export default function App() {
     disconnectFromAP();
     setIsConnected(false);
     setSlotName("");
+  };
+
+  const getMissingLocationsSorted = () => {
+    return apClient.room.missingLocations.toSorted((a, b) => a - b);
   };
 
   return (
