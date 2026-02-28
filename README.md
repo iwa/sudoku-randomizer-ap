@@ -12,3 +12,4 @@
 - notes entry (corner/center)
 - remove user-input from duplicate detection (avoid losing lives)
 - disable number button when 9 occurences used
+- colorize & betterify server messages
