@@ -69,8 +69,8 @@ export default function Cell({
       onClick={onClick}
       onKeyDown={handleKeyDown}
       className={`
-        w-12 h-12 flex items-center justify-center
-        cursor-pointer select-none text-xl outline-none
+        w-14 h-14 flex items-center justify-center
+        cursor-pointer select-none text-2xl outline-none
         transition-colors duration-100
         ${bg} ${textColor}
         ${borderT} ${borderL} ${borderB} ${borderR}
