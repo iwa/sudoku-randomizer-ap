@@ -30,6 +30,7 @@ export default function APConnect({ isConnected, onConnected }: Props) {
         value={server}
         onChange={(e) => setServer(e.target.value)}
         disabled={isConnected}
+        autoComplete="off"
         className="border border-zinc-600 bg-zinc-700 text-white rounded p-1 mb-2 w-full disabled:opacity-50"
       />
       <input
@@ -38,6 +39,7 @@ export default function APConnect({ isConnected, onConnected }: Props) {
         value={slot}
         onChange={(e) => setSlot(e.target.value)}
         disabled={isConnected}
+        autoComplete="off"
         className="border border-zinc-600 bg-zinc-700 text-white rounded p-1 mb-2 w-full disabled:opacity-50"
       />
       <input
@@ -46,6 +48,7 @@ export default function APConnect({ isConnected, onConnected }: Props) {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         disabled={isConnected}
+        autoComplete="off"
         className="border border-zinc-600 bg-zinc-700 text-white rounded p-1 mb-2 w-full disabled:opacity-50"
       />
       <button
