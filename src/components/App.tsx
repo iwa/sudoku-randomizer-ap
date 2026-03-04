@@ -125,10 +125,6 @@ export default function App() {
 
   return (
     <main>
-      <h1 className="text-2xl text-center font-bold italic text-white pt-4 pb-5">
-        SudokuRando - AP
-      </h1>
-
       <div className="flex flex-row gap-2 px-2">
         <div className="flex-1 bg-zinc-800 flex flex-col items-center justify-center rounded gap-2 p-4">
           <Lives lives={lives} gridLocked={gridLocked} />
