@@ -27,3 +27,7 @@ export function getSlotName(): string {
 export function sendLocationCheck(locationId: number) {
   apClient.check(locationId);
 }
+
+export function sendLocationsCheck(locationIds: number[]) {
+  apClient.check(...locationIds);
+}
