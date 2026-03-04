@@ -1,1 +1,5 @@
 @import "tailwindcss";
+
+@theme {
+    --shadow-numpad-button: 0 2px var(--color-zinc-700);
+}

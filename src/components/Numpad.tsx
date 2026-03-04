@@ -6,14 +6,16 @@ interface Props {
 }
 
 export default function Numpad({ onInput, disabled = false }: Props) {
+  const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
   const btnBase =
-    "w-12 h-12 rounded text-lg font-semibold transition-colors duration-100 cursor-pointer disabled:cursor-not-allowed disabled:opacity-40";
-  const numBtn = `${btnBase} bg-white border border-gray-300 text-black hover:bg-blue-50 active:bg-blue-100`;
-  const delBtn = `${btnBase} bg-white border border-gray-300 text-red-500 hover:bg-red-50 active:bg-red-100 text-sm`;
+    "w-12 h-12 rounded text-lg font-semibold transition-[box-shadow,translate] duration-200 cursor-pointer bg-zinc-800 border border-zinc-700 shadow-numpad-button active:shadow-none active:translate-y-[2px] disabled:cursor-not-allowed disabled:opacity-40";
+  const numBtn = `${btnBase} text-white hover:bg-white/3 active:bg-white/10`;
+  const delBtn = `${btnBase} text-red-500 hover:bg-red-900/10 active:bg-red-900/30 text-sm`;
 
   return (
     <div className="flex gap-1.5 mt-2 justify-center">
-      {([1, 2, 3, 4, 5, 6, 7, 8, 9] as const).map((n) => (
+      {numbers.map((n) => (
         <button
           key={n}
           type="button"
