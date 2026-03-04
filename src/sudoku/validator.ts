@@ -106,3 +106,30 @@ export function validateAgainstSolution(grid: Grid, solution: Solution): Grid {
     })),
   );
 }
+
+/**
+ * Analyze a grid and return an array of numbers that have already been used 9 times.
+ */
+export function getUsedUpNumbers(grid: Grid): number[] {
+  const count: number[] = [];
+  const numbersDisabled: number[] = [];
+
+  // count how many times a number is used in the grid
+  for (let row = 0; row < 9; row++) {
+    for (let col = 0; col < 9; col++) {
+      const cell = grid[row][col];
+      if (cell.value !== null) {
+        count[cell.value] = (count[cell.value] || 0) + 1;
+      }
+    }
+  }
+
+  // build numbersDisabled which contains actual numbers to disable
+  count.forEach((value, index) => {
+    if (value >= 9) {
+      numbersDisabled.push(index);
+    }
+  });
+
+  return numbersDisabled;
+}

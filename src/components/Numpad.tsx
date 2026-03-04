@@ -3,9 +3,14 @@ import type { CellValue } from "../sudoku/types";
 interface Props {
   onInput: (value: CellValue) => void;
   disabled?: boolean;
+  disabledNumpadButtons: number[];
 }
 
-export default function Numpad({ onInput, disabled = false }: Props) {
+export default function Numpad({
+  onInput,
+  disabled = false,
+  disabledNumpadButtons,
+}: Props) {
   const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
   const btnBase =
@@ -19,7 +24,7 @@ export default function Numpad({ onInput, disabled = false }: Props) {
         <button
           key={n}
           type="button"
-          disabled={disabled}
+          disabled={disabled || disabledNumpadButtons.includes(n)}
           onClick={() => onInput(n)}
           className={numBtn}
         >

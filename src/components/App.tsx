@@ -15,6 +15,7 @@ import {
 import { generateGrid } from "../sudoku/generator";
 import {
   doesGridContainsUserInput,
+  getUsedUpNumbers,
   isGridComplete,
   isGridValid,
   validateGrid,
@@ -39,6 +40,9 @@ export default function App() {
   const [selected, setSelected] = useState<[number, number] | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [slotName, setSlotName] = useState("");
+  const [disabledNumpadButtons, setDisabledNumpadButtons] = useState<number[]>(
+    [],
+  );
   const { checked, total } = useLocationProgress(isConnected);
   const hasLocationsRemaining = isConnected && checked < total;
 
@@ -61,6 +65,7 @@ export default function App() {
     }
 
     setGrid(validated);
+    setDisabledNumpadButtons(getUsedUpNumbers(validated));
   };
 
   const handleCellSelect = (row: number, col: number) => {
@@ -82,6 +87,7 @@ export default function App() {
     setSolution(result.solution);
     setLives(3);
     setSelected(null);
+    setDisabledNumpadButtons(getUsedUpNumbers(result.grid));
   };
 
   const gridComplete = isGridComplete(grid);
@@ -139,6 +145,7 @@ export default function App() {
               selected === null ||
               grid[selected[0]][selected[1]].isGiven
             }
+            disabledNumpadButtons={disabledNumpadButtons}
           />
         </div>
 
