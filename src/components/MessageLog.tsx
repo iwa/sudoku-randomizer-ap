@@ -1,13 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import { apClient } from "../archipelago/client";
 
-export default function MessageLog() {
+interface Props {
+  slotName: string;
+}
+
+export default function MessageLog({ slotName }: Props) {
   const [messages, setMessages] = useState<string[]>([]);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onMessage = (text: string) => {
-      setMessages((prev) => [...prev, text]);
+      const splitText = text.split(",");
+
+      if (splitText.length === 6) {
+        setMessages((prev) => [...prev, splitText.join("")]);
+      } else {
+        setMessages((prev) => [...prev, text]);
+      }
     };
 
     apClient.messages.on("message", onMessage);
@@ -30,7 +40,14 @@ export default function MessageLog() {
         ) : (
           messages.map((msg, i) => (
             <p key={i} className="wrap-break-word">
-              {msg}
+              {slotName && msg.startsWith(slotName) ? (
+                <>
+                  <span className="text-green-400 font-bold">{slotName}</span>
+                  {msg.slice(slotName.length)}
+                </>
+              ) : (
+                msg
+              )}
             </p>
           ))
         )}

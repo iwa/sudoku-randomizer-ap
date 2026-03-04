@@ -173,7 +173,7 @@ export default function App() {
         </div>
       </div>
 
-      <MessageLog />
+      <MessageLog slotName={slotName} />
     </main>
   );
 }
