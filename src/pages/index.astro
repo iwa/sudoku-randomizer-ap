@@ -5,7 +5,9 @@ import App from "../components/App";
 ---
 
 <Layout>
-    <App client:only="react" />
+    <App client:only="react">
+        <div slot="fallback">Loading...</div>
+    </App>
     <footer class="text-zinc-700 text-xs text-center py-4">
         Made by <a href="https://github.com/iwa">iwa</a> - 2026
     </footer>
