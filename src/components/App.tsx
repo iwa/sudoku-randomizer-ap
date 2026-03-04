@@ -9,7 +9,7 @@ import Numpad from "./Numpad";
 import MessageLog from "./MessageLog";
 import {
   disconnectFromAP,
-  sendLocationCheck,
+  sendLocationsCheck,
   apClient,
 } from "../archipelago/client";
 import { generateGrid } from "../sudoku/generator";
@@ -40,6 +40,7 @@ export default function App() {
   const [selected, setSelected] = useState<[number, number] | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [slotName, setSlotName] = useState("");
+  const [difficulty, setDifficulty] = useState<Difficulty>("normal");
   const [disabledNumpadButtons, setDisabledNumpadButtons] = useState<number[]>(
     [],
   );
@@ -85,6 +86,7 @@ export default function App() {
     const result = generateGrid(difficulty);
     setGrid(result.grid);
     setSolution(result.solution);
+    setDifficulty(difficulty);
     setLives(3);
     setSelected(null);
     setDisabledNumpadButtons(getUsedUpNumbers(result.grid));
@@ -97,11 +99,31 @@ export default function App() {
   const handleCheck = () => {
     if (!gridValid) return;
 
-    const nextLocation = getMissingLocationsSorted()[0];
-    if (nextLocation !== undefined) {
-      sendLocationCheck(nextLocation);
+    let howManyChecks = 1;
+    switch (difficulty) {
+      case "easy":
+        howManyChecks = 1;
+        break;
+      case "normal":
+        howManyChecks = 2;
+        break;
+      case "hard":
+        howManyChecks = 3;
+        break;
+    }
+    howManyChecks = Math.min(howManyChecks, (checked + howManyChecks) % total);
+
+    const checkToSend = [];
+    for (let i = 0; i < howManyChecks; i++) {
+      const nextLocation = getMissingLocationsSorted()[i];
+      if (nextLocation !== undefined) {
+        checkToSend.push(nextLocation);
+      }
     }
 
+    sendLocationsCheck(checkToSend);
+
+    // reset current grid
     setGrid(createEmptyGrid());
     setSolution(null);
     setLives(null);
