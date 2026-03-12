@@ -111,7 +111,7 @@ export default function App() {
         howManyChecks = 3;
         break;
     }
-    howManyChecks = Math.min(howManyChecks, (checked + howManyChecks) % total);
+    howManyChecks = howManyChecks - ((checked + howManyChecks) % total);
 
     const checkToSend = [];
     for (let i = 0; i < howManyChecks; i++) {
