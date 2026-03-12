@@ -13,7 +13,8 @@ export default function MessageLog({ slotName }: Props) {
     const onMessage = (text: string) => {
       const splitText = text.split(",");
 
-      if (splitText.length === 6) {
+      if (splitText.length === 6 || splitText.length === 8) {
+        // found / sent messages
         setMessages((prev) => [...prev, splitText.join("")]);
       } else {
         setMessages((prev) => [...prev, text]);
